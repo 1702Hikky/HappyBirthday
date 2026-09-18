@@ -190,6 +190,16 @@
     margin-top: 18px;
     animation: float 3s ease-in-out infinite;
   }
+
+  /* ---------- Улучшенный Фейерверк ---------- */
+  .firework-particle {
+    position: fixed;
+    width: 8px; /* Увеличен размер */
+    height: 8px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+  }
 </style>
 </head>
 <body>
@@ -235,6 +245,52 @@
   </div>
 
   <script>
+    // Улучшенная функция создания фейерверка
+    function createFirework(x, y) {
+      const particleCount = 100; // Больше частиц для густоты
+      // Более яркие и контрастные цвета
+      const colors = ['#ff0055', '#ffcc00', '#00ffaa', '#00ccff', '#cc00ff', '#ffffff', '#ff9900', '#ff3366'];
+      
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add('firework-particle');
+        document.body.appendChild(particle);
+        
+        const angle = Math.random() * Math.PI * 2;
+        const velocity = 100 + Math.random() * 150; // Увеличен радиус разлёта
+        const tx = Math.cos(angle) * velocity;
+        const ty = Math.sin(angle) * velocity;
+        
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        
+        particle.style.left = `${x}px`;
+        particle.style.top = `${y}px`;
+        particle.style.backgroundColor = color;
+        // Мощное многослойное свечение для заметности
+        particle.style.boxShadow = `0 0 10px ${color}, 0 0 20px ${color}, 0 0 30px ${color}`;
+        
+        // Замедленная анимация: от 1.2 до 2.0 секунд
+        const duration = 1200 + Math.random() * 800;
+        
+        // Усиленная гравитация, чтобы соответствовала замедленному падению
+        const gravityDrop = 80 + Math.random() * 60;
+        
+        const animation = particle.animate([
+          // Начинаем чуть крупнее и полностью видимыми
+          { transform: 'translate(-50%, -50%) scale(1.5)', opacity: 1 },
+          // Заканчиваем маленькими, смещёнными вниз гравитацией и полностью прозрачными
+          { transform: `translate(calc(-50% + ${tx}px), calc(-50% + ${ty + gravityDrop}px)) scale(0.2)`, opacity: 0 }
+        ], {
+          duration: duration,
+          // Плавное замедление (ease-out), имитирующее сопротивление воздуха
+          easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+        });
+        
+        // Удаляем частицу после завершения анимации
+        animation.onfinish = () => particle.remove();
+      }
+    }
+
     // лёгкий 3D-наклон за курсором
     const blocks = document.querySelectorAll('.block');
     document.addEventListener('mousemove', e => {
@@ -250,13 +306,21 @@
       });
     });
 
-    // при клике — подпрыгивание
+    // при клике — подпрыгивание и улучшенный фейерверк
     blocks.forEach(b => {
-      b.addEventListener('click', () => {
+      b.addEventListener('click', (e) => {
+        // Вычисляем центр кнопки для запуска фейерверка
+        const rect = b.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        createFirework(centerX, centerY);
+
+        // Анимация подпрыгивания
+        const currentTransform = b.style.transform || 'rotateX(12deg) rotateY(-8deg)';
         b.animate([
-          { transform: b.style.transform + ' scale(1)' },
-          { transform: b.style.transform + ' scale(1.15) rotate(2deg)' },
-          { transform: b.style.transform + ' scale(1)' }
+          { transform: currentTransform + ' scale(1)' },
+          { transform: currentTransform + ' scale(1.15) rotate(2deg)' },
+          { transform: currentTransform + ' scale(1)' }
         ], { duration: 450, easing: 'ease-out' });
       });
     });
