@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>С Днём Рождения! 🎂</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    min-height: 100vh;
+    background: radial-gradient(circle at 50% 20%, #2a1b4a 0%, #0f0a1e 60%, #000 100%);
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    color: #fff;
+    overflow-x: hidden;
+    perspective: 1400px;
+    padding: 40px 20px;
+  }
+
+  h1 {
+    text-align: center;
+    font-size: clamp(1.6rem, 5vw, 3rem);
+    margin-bottom: 50px;
+    color: #ffd166;
+    text-shadow: 0 0 30px rgba(255, 209, 102, .6),
+                 0 0 60px rgba(255, 94, 196, .4);
+  }
+
+  .flow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    transform-style: preserve-3d;
+  }
+
+  /* ---------- 3D блок ---------- */
+  .block {
+    position: relative;
+    width: min(90vw, 380px);
+    padding: 28px 24px;
+    text-align: center;
+    font-size: clamp(1rem, 3.5vw, 1.25rem);
+    font-weight: 600;
+    border-radius: 16px;
+    transform-style: preserve-3d;
+    transform: rotateX(12deg) rotateY(-8deg);
+    transition: transform .5s cubic-bezier(.2,.8,.3,1.2);
+    animation: float 4s ease-in-out infinite;
+    cursor: pointer;
+    user-select: none;
+  }
+  .block:hover {
+    transform: rotateX(0deg) rotateY(0deg) translateZ(40px) scale(1.05);
+  }
+  @keyframes float {
+    0%,100% { translate: 0 0; }
+    50%     { translate: 0 -8px; }
+  }
+
+  /* грани (псевдо-объём) */
+  .block::before,
+  .block::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 16px;
+    z-index: -1;
+  }
+  .block::before {
+    transform: translateZ(-18px) translate(10px, 12px);
+    filter: blur(0.5px);
+  }
+  .block::after {
+    transform: translateZ(-9px) translate(5px, 6px);
+  }
+
+  /* цвета блоков */
+  .b1 { background: linear-gradient(135deg,#ff6b6b,#c92a2a); box-shadow: 0 20px 50px rgba(255,80,80,.45); }
+  .b1::before { background:#7a1414; }
+  .b1::after  { background:#a01c1c; }
+
+  .b2 { background: linear-gradient(135deg,#ffd166,#f4a10b); color:#3a2500; box-shadow: 0 20px 50px rgba(255,200,80,.4); }
+  .b2::before { background:#a86c00; }
+  .b2::after  { background:#c98400; }
+
+  .b3 { background: linear-gradient(135deg,#4ade80,#15803d); box-shadow: 0 20px 50px rgba(70,220,120,.4); }
+  .b3::before { background:#0b4a22; }
+  .b3::after  { background:#12622e; }
+
+  .b4 { background: linear-gradient(135deg,#60a5fa,#1d4ed8); box-shadow: 0 20px 50px rgba(80,150,255,.4); }
+  .b4::before { background:#0c2a72; }
+  .b4::after  { background:#123a99; }
+
+  .b5 { background: linear-gradient(135deg,#c084fc,#7c3aed); box-shadow: 0 20px 50px rgba(180,120,255,.45); }
+  .b5::before { background:#3d1477; }
+  .b5::after  { background:#551fa0; }
+
+  /* стрелки */
+  .arrow {
+    width: 0; height: 0;
+    border-left: 14px solid transparent;
+    border-right: 14px solid transparent;
+    border-top: 22px solid rgba(255,255,255,.7);
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,.6));
+    margin: 6px 0;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%,100% { opacity:.5; translate: 0 0; }
+    50%     { opacity:1;  translate: 0 4px; }
+  }
+
+  /* ветвление да / нет */
+  .branch {
+    display: flex;
+    gap: clamp(10px, 4vw, 60px);
+    justify-content: center;
+    align-items: flex-start;
+    margin-top: 6px;
+    flex-wrap: wrap;
+    position: relative;
+  }
+  .branch .col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .label {
+    font-size: .95rem;
+    font-weight: 800;
+    padding: 4px 14px;
+    border-radius: 20px;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+  }
+  .label.da  { background:#16a34a; box-shadow: 0 0 20px #16a34a88; }
+  .label.net { background:#dc2626; box-shadow: 0 0 20px #dc262688; }
+
+  /* ветвящиеся линии сверху */
+  .split {
+    width: min(80vw, 500px);
+    height: 40px;
+    margin: 4px auto -4px;
+    position: relative;
+  }
+  .split::before,
+  .split::after {
+    content:'';
+    position:absolute;
+    top:0;
+    width:2px;
+    height:100%;
+    background: rgba(255,255,255,.6);
+  }
+  .split::before { left:50%; transform: translateX(-50%); }
+  .split .left,
+  .split .right {
+    position:absolute;
+    top:0;
+    height:100%;
+    border-top: 2px solid rgba(255,255,255,.6);
+    width: 50%;
+  }
+  .split .left  { left:0;  border-left: 2px solid rgba(255,255,255,.6); border-radius: 0; }
+  .split .right { right:0; border-right:2px solid rgba(255,255,255,.6); border-radius: 0; }
+  .split .stem {
+    position:absolute;
+    top:-22px; left:50%;
+    transform: translateX(-50%);
+    width:2px; height:22px;
+    background: rgba(255,255,255,.6);
+  }
+
+  .final {
+    margin-top: 60px;
+    text-align: center;
+    font-size: clamp(1.3rem, 5vw, 2.2rem);
+    font-weight: 800;
+    color: #ffd166;
+    text-shadow: 0 0 25px rgba(255, 209, 102, .6),
+                 0 0 50px rgba(122, 252, 255, .4);
+    line-height: 1.4;
+    padding: 0 15px;
+  }
+
+  .cake {
+    display:block;
+    text-align:center;
+    font-size: 3rem;
+    margin-top: 18px;
+    animation: float 3s ease-in-out infinite;
+  }
+</style>
+</head>
+<body>
+
+  <h1>🎉 С Днём Рождения! 🎉</h1>
+
+  <div class="flow">
+
+    <div class="block b1">У вас есть проблема? 🤔</div>
+
+    <div class="arrow"></div>
+
+    <div class="block b2">Вы можете её решить? 💪</div>
+
+    <!-- ветвление -->
+    <div class="split">
+      <div class="stem"></div>
+      <div class="left"></div>
+      <div class="right"></div>
+    </div>
+
+    <div class="branch">
+      <div class="col">
+        <div class="label da">ДА ✅</div>
+        <div class="block b3">Не волнуйтесь! 😌</div>
+      </div>
+      <div class="col">
+        <div class="label net">НЕТ ❌</div>
+        <div class="block b4">Не волнуйтесь! 😌</div>
+      </div>
+    </div>
+
+    <div class="arrow" style="margin-top:30px"></div>
+
+    <div class="block b5">Всё будет хорошо! 🎈</div>
+
+  </div>
+
+  <div class="final">
+    Счастья, здоровья и исполнения желаний!<br>
+    Пусть проблемы решаются сами, а праздник длится вечно!
+    <span class="cake">🎂🎁🥳</span>
+  </div>
+
+  <script>
+    // лёгкий 3D-наклон за курсором
+    const blocks = document.querySelectorAll('.block');
+    document.addEventListener('mousemove', e => {
+      const cx = window.innerWidth  / 2;
+      const cy = window.innerHeight / 2;
+      const dx = (e.clientX - cx) / cx;
+      const dy = (e.clientY - cy) / cy;
+
+      blocks.forEach((b, i) => {
+        const depth = 6 + i * 1.5;
+        b.style.transform =
+          `rotateY(${dx * depth}deg) rotateX(${12 - dy * depth}deg) translateZ(${10 + i*4}px)`;
+      });
+    });
+
+    // при клике — подпрыгивание
+    blocks.forEach(b => {
+      b.addEventListener('click', () => {
+        b.animate([
+          { transform: b.style.transform + ' scale(1)' },
+          { transform: b.style.transform + ' scale(1.15) rotate(2deg)' },
+          { transform: b.style.transform + ' scale(1)' }
+        ], { duration: 450, easing: 'ease-out' });
+      });
+    });
+  </script>
+
+</body>
+</html>
